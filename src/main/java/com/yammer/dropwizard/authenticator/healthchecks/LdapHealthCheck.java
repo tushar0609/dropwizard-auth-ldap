@@ -1,5 +1,6 @@
 package com.yammer.dropwizard.authenticator.healthchecks;
 
+
 import com.codahale.metrics.health.HealthCheck;
 import io.dropwizard.auth.AuthenticationException;
 import io.dropwizard.auth.Authenticator;

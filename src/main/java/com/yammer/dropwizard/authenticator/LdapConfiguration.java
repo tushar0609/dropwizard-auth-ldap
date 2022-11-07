@@ -1,11 +1,11 @@
 package com.yammer.dropwizard.authenticator;
 
-import com.google.common.cache.CacheBuilderSpec;
+import com.github.benmanes.caffeine.cache.CaffeineSpec;
 import com.google.common.collect.Sets;
 import io.dropwizard.util.Duration;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.Set;
@@ -18,7 +18,7 @@ public class LdapConfiguration {
 
     @NotNull
     @Valid
-    private CacheBuilderSpec cachePolicy = CacheBuilderSpec.disableCaching();
+    private CaffeineSpec cachePolicy = CaffeineSpec.parse("maximumSize=0");
 
     @NotNull
     @NotEmpty
@@ -65,11 +65,11 @@ public class LdapConfiguration {
         return this;
     }
 
-    public CacheBuilderSpec getCachePolicy() {
+    public CaffeineSpec getCachePolicy() {
         return cachePolicy;
     }
 
-    public LdapConfiguration setCachePolicy(CacheBuilderSpec cachePolicy) {
+    public LdapConfiguration setCachePolicy(CaffeineSpec cachePolicy) {
         this.cachePolicy = cachePolicy;
         return this;
     }

@@ -69,8 +69,8 @@ public class LdapAuthValueFactoryProvider<T extends Principal> extends AbstractV
 
         @Override
         protected void configure() {
-            bind(new io.dropwizard.auth.AuthValueFactoryProvider.PrincipalClassProvider<>(principalClass)).to(io.dropwizard.auth.AuthValueFactoryProvider.PrincipalClassProvider.class);
-            bind(io.dropwizard.auth.AuthValueFactoryProvider.class).to(ValueParamProvider.class).in(Singleton.class);
+            bind(new io.dropwizard.auth.LdapAuthValueFactoryProvider.PrincipalClassProvider<>(principalClass)).to(io.dropwizard.auth.LdapAuthValueFactoryProvider.PrincipalClassProvider.class);
+            bind(io.dropwizard.auth.LdapAuthValueFactoryProvider.class).to(ValueParamProvider.class).in(Singleton.class);
         }
     }
 }

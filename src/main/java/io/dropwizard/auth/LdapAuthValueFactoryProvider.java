@@ -24,17 +24,8 @@ import java.util.function.Function;
 @Singleton
 public class LdapAuthValueFactoryProvider<T extends Principal> extends AbstractValueParamProvider {
 
-    /**
-     * Class of the provided {@link Principal}
-     */
     private final Class<T> principalClass;
 
-    /**
-     * {@link Principal} value factory provider injection constructor.
-     *
-     * @param mpep                   multivalued parameter extractor provider
-     * @param principalClassProvider provider of the principal class
-     */
     @Inject
     public LdapAuthValueFactoryProvider(MultivaluedParameterExtractorProvider mpep,
                                     io.dropwizard.auth.LdapAuthValueFactoryProvider.PrincipalClassProvider<T> principalClassProvider) {
@@ -68,11 +59,6 @@ public class LdapAuthValueFactoryProvider<T extends Principal> extends AbstractV
         }
     }
 
-    /**
-     * Injection binder for {@link io.dropwizard.auth.AuthValueFactoryProvider}.
-     *
-     * @param <T> the type of the principal
-     */
     public static class Binder<T extends Principal> extends AbstractBinder {
 
         private final Class<T> principalClass;

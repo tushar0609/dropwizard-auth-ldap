@@ -16,29 +16,6 @@ import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.FeatureContext;
 import java.io.IOException;
 
-/**
- * A {@link DynamicFeature} supporting the {@code javax.annotation.security.RolesAllowed},
- * {@code javax.annotation.security.PermitAll} and {@code javax.annotation.security.DenyAll}
- * on resource methods and sub-resource methods.
- * <p/>
- * The {@link javax.ws.rs.core.SecurityContext} is utilized, using the
- * {@link javax.ws.rs.core.SecurityContext#isUserInRole(String) } method,
- * to ascertain if the user is in one
- * of the roles declared in by a {@code &#64;RolesAllowed}. If a user is in none of
- * the declared roles then a 403 (Forbidden) response is returned.
- * <p/>
- * If the {@code &#64;DenyAll} annotation is declared then a 403 (Forbidden) response
- * is returned.
- * <p/>
- * If the {@code &#64;PermitAll} annotation is declared and is not overridden then
- * this filter will not be applied.
- * <p/>
- * If a user is not authenticated and annotated method is restricted for certain roles then a 403
- * (Not Authenticated) response is returned.
- *
- * @author Paul Sandoz
- * @author Martin Matula
- */
 public class LdapRolesAllowedDynamicFeature implements DynamicFeature {
 
     @Override

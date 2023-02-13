@@ -10,52 +10,31 @@ Maven
 <dependency>
     <groupId>com.yammer.dropwizard</groupId>
     <artifactId>dropwizard-auth-ldap</artifactId>
-    <version>2.0.34-2</version>
+    <version>2.1.3-1</version>
 </dependency>
 ```
 
-Set Configuration
-----------
-
-```java
-LdapConfiguration configuration = new LdapConfiguration();
-LdapAuthenticator authenticator = new LdapAuthenticator(configuration);
-authenticator.authenticate(new BasicCredentials("user", "password"));
-```
-
-Add it to your Service
+Initialize the bundle
 ----------------------
 I assume you are already familiar with dropwizard's authentication module.
 You can find more information about dropwizard authentication at http://www.dropwizard.io/manual/auth.html
 
-Here is an example how to add `LdapAuthenticator` using a `CachingAuthenticator` to your service:
+Here is an example how to use `LdapAuthenticatorBundle`:
 
 ```java
 @Override
-public void run(ValhallaServiceConfiguration configuration, Environment environment) throws Exception{
-        LdapConfiguration ldapConfiguration=configuration.getLdapConfiguration();
-        CachingAuthenticator ldapAuthenticator=new CachingAuthenticator(environment.metrics(),
-        new UserResourceAuthenticator(new LdapAuthenticator(ldapConfiguration)),
-        ldapConfiguration.getCachePolicy());
+public void bootstrap(final Bootstrap<ServiceConfiguration> bootstrap) throws Exception{
+        LdapAuthenticatorBundle ldapBundle = new LdapAuthenticatorBundle<ServiceConfiguration>(){
 
-        environment.jersey().register(new LdapAuthDynamicFeature(
-        new BasicCredentialAuthFilter.Builder<LdapUser>()
-        .setAuthenticator(ldapAuthenticator)
-        .setAuthorizer((Authorizer<LdapUser>)(user,role)->user.getRoles().contains(role))
-        .setRealm("realm")
-        .buildAuthFilter()));
-
-        environment.jersey().register(LdapRolesAllowedDynamicFeature.class);
-        //If you want to use @Auth to inject a custom Principal type into your resource
-        environment.jersey().register(new LdapAuthValueFactoryProvider.Binder<>(LdapUser.class));
+            public LdapConfiguration getCOnfiguration(ServiceConfiguration configuration){
+                configuration.getLdapConfiguration()    
+            }
+        }
 }
 ```
 
-Additional Notes
+Define resource with Ldap authentication annotations
 ----------------------
-
-Example Resource:
-
 ```java
 @Path("/")
 @Produces(MediaType.APPLICATION_JSON)
@@ -75,7 +54,8 @@ public class LoginResource {
 }
 ```
 
-Register the resource:
+Register the resource
+-----------
 ```java
 environment.jersey().register(new LoginResource());
 ```

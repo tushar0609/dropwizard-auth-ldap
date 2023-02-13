@@ -1,11 +1,7 @@
-LDAP Authenticator [![Build Status](https://travis-ci.org/yammer/dropwizard-auth-ldap.svg)](https://travis-ci.org/yammer/dropwizard-auth-ldap) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.yammer.dropwizard/dropwizard-auth-ldap/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.yammer.dropwizard/dropwizard-auth-ldap)
+LDAP Authenticator 
 ==================
 
-This is a simple dropwizard-auth module using Basic-Auth + LDAP for authentication. This is the module internal tools at Yammer
-used to authenticate users.
-
-Note: This module has only been subjected to the traffic of our engineering team. We have not used this to authenticate high-traffic or
-tuned the JNDI connection pool as such.
+This is a simple dropwizard-auth module using Basic-Auth + LDAP for authentication. 
 
 Maven
 -----
@@ -18,12 +14,7 @@ Maven
 </dependency>
 ```
 
-Legacy Dropwizard Support
-------------------
-0.0.x releases will contain bug/security updates.
-0.1.x and beyond will support 0.7+ dropwizard
-
-How To Use
+Set Configuration
 ----------
 
 ```java
@@ -34,7 +25,6 @@ authenticator.authenticate(new BasicCredentials("user", "password"));
 
 Add it to your Service
 ----------------------
-
 I assume you are already familiar with dropwizard's authentication module.
 You can find more information about dropwizard authentication at http://www.dropwizard.io/manual/auth.html
 
@@ -42,27 +32,54 @@ Here is an example how to add `LdapAuthenticator` using a `CachingAuthenticator`
 
 ```java
 @Override
-public void run(Configuration configuration, Environment environment) throws Exception {
-    LdapConfiguration ldapConfiguration = configuration.getLdapConfiguration();
-    Authenticator<BasicCredentials, BasicCredentials> ldapAuthenticator = new CachingAuthenticator<>(
-            environment.metrics(),
-            new ResourceAuthenticator(new LdapAuthenticator(ldapConfiguration)),
-            ldapConfiguration.getCachePolicy());
+public void run(ValhallaServiceConfiguration configuration, Environment environment) throws Exception{
+        LdapConfiguration ldapConfiguration=configuration.getLdapConfiguration();
+        CachingAuthenticator ldapAuthenticator=new CachingAuthenticator(environment.metrics(),
+        new UserResourceAuthenticator(new LdapAuthenticator(ldapConfiguration)),
+        ldapConfiguration.getCachePolicy());
 
-    environment.jersey().register(AuthFactory.binder(new BasicAuthFactory<>(ldapAuthenticator, "realm", BasicCredentials.class));
-    environment.healthChecks().register("ldap",
-            new LdapHealthCheck<>(new ResourceAuthenticator(new LdapCanAuthenticate(ldapConfiguration))));
+        environment.jersey().register(new LdapAuthDynamicFeature(
+        new BasicCredentialAuthFilter.Builder<LdapUser>()
+        .setAuthenticator(ldapAuthenticator)
+        .setAuthorizer((Authorizer<LdapUser>)(user,role)->user.getRoles().contains(role))
+        .setRealm("realm")
+        .buildAuthFilter()));
+
+        environment.jersey().register(LdapRolesAllowedDynamicFeature.class);
+        //If you want to use @Auth to inject a custom Principal type into your resource
+        environment.jersey().register(new LdapAuthValueFactoryProvider.Binder<>(LdapUser.class));
 }
 ```
 
 Additional Notes
 ----------------------
 
-Make sure to register your resources. Example:
+Example Resource:
 
 ```java
-environment.jersey().register(new YourResource());
+@Path("/")
+@Produces(MediaType.APPLICATION_JSON)
+@Slf4j
+@Singleton
+@Api(value = "Login")
+@AllArgsConstructor
+@NoArgsConstructor
+public class LoginResource {
+
+    @POST
+    @Path("/login")
+    @RolesAllowed({"USER"})
+    public Response login(@Auth User user) {
+        return Response.ok().build();
+    }
+}
 ```
+
+Register the resource:
+```java
+environment.jersey().register(new LoginResource());
+```
+
 Configuration
 -------------
 
@@ -82,11 +99,3 @@ restrictToGroups:
 connectTimeout: 500ms
 readTimeout: 500ms
 ```
-
-CHANGELOG
----------
-Check the [Changelog](https://github.com/yammer/dropwizard-auth-ldap/blob/master/CHANGELOG.md) for detailed updates.
-
-Bugs and Feedback
------------------
-For bugs, questions, and discussions please use the [Github Issues](https://github.com/yammer/dropwizard-auth-ldap/issues)

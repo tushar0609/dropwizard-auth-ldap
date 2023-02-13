@@ -10,7 +10,6 @@ import java.lang.annotation.Annotation;
 import java.util.Optional;
 
 public class LdapAuthDynamicFeature implements DynamicFeature {
-
     private final ContainerRequestFilter authFilter;
 
     private final Class<? extends ContainerRequestFilter> authFilterClass;
@@ -48,7 +47,6 @@ public class LdapAuthDynamicFeature implements DynamicFeature {
                 return;
             }
         }
-
         // Second, check for any authorization annotations on the class or method.
         // Note that @DenyAll shouldn't be attached to classes.
         final boolean annotationOnClass = (resourceInfo.getResourceClass().getAnnotation(LdapRolesAllowed.class) != null) ||
@@ -60,7 +58,6 @@ public class LdapAuthDynamicFeature implements DynamicFeature {
             registerAuthFilter(context);
         }
     }
-
     private boolean containsAuthAnnotation(final Annotation[] annotations) {
         for (final Annotation annotation : annotations) {
             if (annotation instanceof LdapAuth) {

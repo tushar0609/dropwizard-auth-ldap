@@ -113,13 +113,13 @@ public class LdapAuthenticator {
     }
 
     @Timed
-    public Optional<User> authenticateAndReturnPermittedGroups(BasicCredentials credentials) throws io.dropwizard.auth.AuthenticationException {
+    public Optional<LdapUser> authenticateAndReturnPermittedGroups(BasicCredentials credentials) throws io.dropwizard.auth.AuthenticationException {
         final String sanitizedUsername = sanitizeEntity(credentials.getUsername());
         try {
             try (AutoclosingDirContext context = buildContext(sanitizedUsername, credentials.getPassword())) {
                 Set<String> groupMemberships = getGroupMembershipsIntersectingWithRestrictedGroups(context, sanitizedUsername);
                 if (!groupMemberships.isEmpty()) {
-                    return Optional.of(new User(sanitizedUsername, groupMemberships));
+                    return Optional.of(new LdapUser(sanitizedUsername, groupMemberships));
                 }
             }
         } catch (AuthenticationException ae) {

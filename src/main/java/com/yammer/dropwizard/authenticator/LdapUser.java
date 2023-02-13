@@ -3,12 +3,12 @@ package com.yammer.dropwizard.authenticator;
 import java.security.Principal;
 import java.util.Set;
 
-public class User implements Principal {
+public class LdapUser implements Principal {
 
     private final String name;
     private final Set<String> roles;
 
-    public User(String name, Set<String> roles) {
+    public LdapUser(String name, Set<String> roles) {
         this.name = name;
         this.roles = roles;
     }

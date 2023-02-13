@@ -8,7 +8,7 @@ import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class UserResourceAuthenticator implements Authenticator<BasicCredentials, User> {
+public class UserResourceAuthenticator implements Authenticator<BasicCredentials, LdapUser> {
 
     private final LdapAuthenticator ldapAuthenticator;
 
@@ -17,7 +17,7 @@ public class UserResourceAuthenticator implements Authenticator<BasicCredentials
     }
 
     @Override
-    public Optional<User> authenticate(BasicCredentials credentials) throws AuthenticationException {
+    public Optional<LdapUser> authenticate(BasicCredentials credentials) throws AuthenticationException {
         return ldapAuthenticator.authenticateAndReturnPermittedGroups(credentials);
     }
 }

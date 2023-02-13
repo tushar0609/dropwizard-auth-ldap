@@ -9,7 +9,7 @@ import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class ResourceAuthenticator implements Authenticator<BasicCredentials, User> {
+public class ResourceAuthenticator implements Authenticator<BasicCredentials, LdapUser> {
 
     private final LdapAuthenticator ldapAuthenticator;
 
@@ -18,9 +18,9 @@ public class ResourceAuthenticator implements Authenticator<BasicCredentials, Us
     }
 
     @Override
-    public Optional<User> authenticate(BasicCredentials credentials) throws AuthenticationException {
+    public Optional<LdapUser> authenticate(BasicCredentials credentials) throws AuthenticationException {
         if (ldapAuthenticator.authenticate(credentials)) {
-            return Optional.of(new User(credentials.getUsername(), Collections.<String>emptySet()));
+            return Optional.of(new LdapUser(credentials.getUsername(), Collections.<String>emptySet()));
         } else {
             return Optional.empty();
         }

@@ -14,7 +14,7 @@ Maven
 <dependency>
     <groupId>com.yammer.dropwizard</groupId>
     <artifactId>dropwizard-auth-ldap</artifactId>
-    <version>0.2.0</version>
+    <version>2.0.34-2</version>
 </dependency>
 ```
 

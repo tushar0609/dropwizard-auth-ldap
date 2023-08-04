@@ -109,7 +109,7 @@ public class LdapAuthenticator {
     }
 
     public boolean isValidUser(String userName, String role) {
-        return groupCache.getIfPresent(role).contains(userName);
+        return groupCache.getIfPresent(sanitizeEntity(role)).contains(sanitizeEntity(userName));
     }
 
     private AutoclosingDirContext buildContext(String sanitizedUsername, String password) throws NamingException {

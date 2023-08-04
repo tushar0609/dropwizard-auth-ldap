@@ -1,11 +1,11 @@
-LDAP Authenticator 
+LDAP Authenticator
 ==================
 
-This is a simple dropwizard-auth module using Basic-Auth + LDAP for authentication. 
+This is a simple dropwizard-auth module using Basic-Auth + LDAP for authentication.
 
 Maven
 -----
-   
+
 ```xml
 <dependency>
     <groupId>com.yammer.dropwizard</groupId>
@@ -23,18 +23,19 @@ Here is an example how to use `LdapAuthenticatorBundle`:
 
 ```java
 @Override
-public void bootstrap(final Bootstrap<ServiceConfiguration> bootstrap) throws Exception{
-        LdapAuthenticatorBundle ldapBundle = new LdapAuthenticatorBundle<ServiceConfiguration>(){
+public void bootstrap(final Bootstrap<ServiceConfiguration> bootstrap)throws Exception{
+        LdapAuthenticatorBundle ldapBundle=new LdapAuthenticatorBundle<ServiceConfiguration>(){
 
-            public LdapConfiguration getCOnfiguration(ServiceConfiguration configuration){
-                configuration.getLdapConfiguration()    
-            }
+public LdapConfiguration getCOnfiguration(ServiceConfiguration configuration){
+        configuration.getLdapConfiguration()
         }
-}
+        }
+        }
 ```
 
 Define resource with Ldap authentication annotations
 ----------------------
+
 ```java
 @Path("/")
 @Produces(MediaType.APPLICATION_JSON)
@@ -56,6 +57,7 @@ public class LoginResource {
 
 Register the resource
 -----------
+
 ```java
 environment.jersey().register(new LoginResource());
 ```

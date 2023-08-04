@@ -1,19 +1,18 @@
 package io.dropwizard.auth;
 
+import java.lang.reflect.ParameterizedType;
+import java.security.Principal;
+import java.util.Optional;
+import java.util.function.Function;
+import javax.annotation.Nullable;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import org.glassfish.jersey.internal.inject.AbstractBinder;
 import org.glassfish.jersey.server.ContainerRequest;
 import org.glassfish.jersey.server.internal.inject.AbstractValueParamProvider;
 import org.glassfish.jersey.server.internal.inject.MultivaluedParameterExtractorProvider;
 import org.glassfish.jersey.server.model.Parameter;
 import org.glassfish.jersey.server.spi.internal.ValueParamProvider;
-
-import javax.annotation.Nullable;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.lang.reflect.ParameterizedType;
-import java.security.Principal;
-import java.util.Optional;
-import java.util.function.Function;
 
 /**
  * Value factory provider supporting {@link Principal} injection

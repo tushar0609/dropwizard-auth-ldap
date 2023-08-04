@@ -1,8 +1,8 @@
 package com.yammer.dropwizard.authenticator;
 
+import java.util.Hashtable;
 import javax.naming.NamingException;
 import javax.naming.directory.InitialDirContext;
-import java.util.Hashtable;
 
 public class AutoclosingDirContext extends InitialDirContext implements AutoCloseable {
 

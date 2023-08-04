@@ -13,6 +13,8 @@ import io.dropwizard.setup.Environment;
 
 public abstract class LdapAuthenticatorBundle<T extends Configuration> implements ConfiguredBundle<T> {
 
+    private LdapCanAuthenticate ldapContext;
+
     public abstract LdapConfiguration getConfiguration(final T configuration);
 
     @Override
@@ -35,7 +37,12 @@ public abstract class LdapAuthenticatorBundle<T extends Configuration> implement
         environment.jersey().register(LdapRolesAllowedDynamicFeature.class);
         //If you want to use @Auth to inject a custom Principal type into your resource
         environment.jersey().register(new LdapAuthValueFactoryProvider.Binder<>(LdapUser.class));
+        this.ldapContext = new LdapCanAuthenticate(ldapConfiguration);
         environment.healthChecks().register("ldap",
-                new LdapHealthCheck<>(new ResourceAuthenticator(new LdapCanAuthenticate(ldapConfiguration))));
+                new LdapHealthCheck<>(new ResourceAuthenticator(this.ldapContext)));
+    }
+
+    public LdapCanAuthenticate getLdapContext() {
+        return this.ldapContext;
     }
 }

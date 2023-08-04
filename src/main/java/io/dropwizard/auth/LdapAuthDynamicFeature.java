@@ -1,13 +1,12 @@
 package io.dropwizard.auth;
 
-import org.glassfish.jersey.server.model.AnnotatedMethod;
-
+import java.lang.annotation.Annotation;
+import java.util.Optional;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.FeatureContext;
-import java.lang.annotation.Annotation;
-import java.util.Optional;
+import org.glassfish.jersey.server.model.AnnotatedMethod;
 
 public class LdapAuthDynamicFeature implements DynamicFeature {
     private final ContainerRequestFilter authFilter;

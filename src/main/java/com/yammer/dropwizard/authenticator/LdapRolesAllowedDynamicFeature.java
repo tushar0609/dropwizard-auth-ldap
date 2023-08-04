@@ -3,9 +3,7 @@ package com.yammer.dropwizard.authenticator;
 import io.dropwizard.auth.LdapDenyAll;
 import io.dropwizard.auth.LdapPermitAll;
 import io.dropwizard.auth.LdapRolesAllowed;
-import org.glassfish.jersey.server.internal.LocalizationMessages;
-import org.glassfish.jersey.server.model.AnnotatedMethod;
-
+import java.io.IOException;
 import javax.annotation.Priority;
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.Priorities;
@@ -14,7 +12,8 @@ import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.FeatureContext;
-import java.io.IOException;
+import org.glassfish.jersey.server.internal.LocalizationMessages;
+import org.glassfish.jersey.server.model.AnnotatedMethod;
 
 public class LdapRolesAllowedDynamicFeature implements DynamicFeature {
 
@@ -66,6 +65,10 @@ public class LdapRolesAllowedDynamicFeature implements DynamicFeature {
             this.rolesAllowed = (rolesAllowed != null) ? rolesAllowed : new String[] {};
         }
 
+        private static boolean isAuthenticated(final ContainerRequestContext requestContext) {
+            return requestContext.getSecurityContext().getUserPrincipal() != null;
+        }
+
         @Override
         public void filter(final ContainerRequestContext requestContext) throws IOException {
             if (!denyAll) {
@@ -81,10 +84,6 @@ public class LdapRolesAllowedDynamicFeature implements DynamicFeature {
             }
 
             throw new ForbiddenException(LocalizationMessages.USER_NOT_AUTHORIZED());
-        }
-
-        private static boolean isAuthenticated(final ContainerRequestContext requestContext) {
-            return requestContext.getSecurityContext().getUserPrincipal() != null;
         }
     }
 }

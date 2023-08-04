@@ -1,12 +1,11 @@
 package com.yammer.dropwizard.authenticator;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import io.dropwizard.auth.AuthenticationException;
 import io.dropwizard.auth.Authenticator;
 import io.dropwizard.auth.basic.BasicCredentials;
-
 import java.util.Optional;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 public class UserResourceAuthenticator implements Authenticator<BasicCredentials, LdapUser> {
 

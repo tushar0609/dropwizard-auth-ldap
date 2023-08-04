@@ -3,12 +3,11 @@ package com.yammer.dropwizard.authenticator;
 import com.github.benmanes.caffeine.cache.CaffeineSpec;
 import com.google.common.collect.Sets;
 import io.dropwizard.util.Duration;
-
+import java.net.URI;
+import java.util.Set;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.net.URI;
-import java.util.Set;
 
 @SuppressWarnings("unused")
 public class LdapConfiguration {

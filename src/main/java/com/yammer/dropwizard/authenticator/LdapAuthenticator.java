@@ -3,8 +3,8 @@ package com.yammer.dropwizard.authenticator;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.codahale.metrics.annotation.Timed;
-import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import io.dropwizard.auth.basic.BasicCredentials;
 import java.util.*;
@@ -22,7 +22,7 @@ public class LdapAuthenticator {
     private static final Logger LOG = LoggerFactory.getLogger(LdapAuthenticator.class);
     protected final LdapConfiguration configuration;
 
-    protected final Cache<String, Set<String>> groupCache;
+    protected final LoadingCache<String, Set<String>> groupCache;
 
     public LdapAuthenticator(LdapConfiguration configuration) {
         this.configuration = checkNotNull(configuration);
@@ -100,7 +100,7 @@ public class LdapAuthenticator {
                 return filterByGroup(context, sanitizedUsername);
             }
         } catch (AuthenticationException ae) {
-            LOG.debug("{} failed to authenticate. {}", sanitizedUsername, ae);
+            LOG.error("{} failed to authenticate.", sanitizedUsername, ae);
         } catch (NamingException err) {
             throw new io.dropwizard.auth.AuthenticationException(String.format("LDAP Authentication failure (username: %s)",
                     sanitizedUsername), err);
@@ -109,7 +109,11 @@ public class LdapAuthenticator {
     }
 
     public boolean isValidUser(String userName, String role) {
-        return groupCache.getIfPresent(sanitizeEntity(role)).contains(sanitizeEntity(userName));
+        Set<String> members = groupCache.get(role); // populate cache if not already populated (this is a no-op if already populated
+        if(Objects.isNull(members) || members.isEmpty()) {
+            return false;
+        }
+        return members.contains(sanitizeEntity(userName));
     }
 
     private AutoclosingDirContext buildContext(String sanitizedUsername, String password) throws NamingException {
@@ -131,7 +135,7 @@ public class LdapAuthenticator {
                 }
             }
         } catch (AuthenticationException ae) {
-            LOG.debug("{} failed to authenticate. {}", sanitizedUsername, ae);
+            LOG.error("{} failed to authenticate.", sanitizedUsername, ae);
         } catch (NamingException err) {
             throw new io.dropwizard.auth.AuthenticationException(String.format("LDAP Authentication failure (username: %s)",
                     sanitizedUsername), err);

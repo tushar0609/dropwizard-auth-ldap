@@ -12,6 +12,7 @@ import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.FeatureContext;
+import javax.ws.rs.core.HttpHeaders;
 import org.glassfish.jersey.server.internal.LocalizationMessages;
 import org.glassfish.jersey.server.model.AnnotatedMethod;
 
@@ -71,6 +72,9 @@ public class LdapRolesAllowedDynamicFeature implements DynamicFeature {
 
         @Override
         public void filter(final ContainerRequestContext requestContext) throws IOException {
+            if(!requestContext.getHeaders().getFirst(HttpHeaders.AUTHORIZATION).startsWith("Basic")) {
+                return;
+            }
             if (!denyAll) {
                 if (rolesAllowed.length > 0 && !isAuthenticated(requestContext)) {
                     throw new ForbiddenException(LocalizationMessages.USER_NOT_AUTHORIZED());
